@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tremper Family Hours</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:           #fdf6ef;
+      --white:           #ffffff;
+      --terra:           #c97c5d;
+      --terra-dark:      #a8634a;
+      --sage:            #7a9e87;
+      --text:            #3a3230;
+      --text-muted:      #8a7e78;
+      --border:          #e8ddd5;
+      --success-bg:      #edf7f0;
+      --success-text:    #2d6a4f;
+      --error-color:     #b83c2b;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--terra-dark);
+      line-height: 1.2;
+    }
+
+    header p {
+      margin-top: 0.3rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 1.75rem 1.5rem;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07);
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    label .optional {
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 0.85em;
+    }
+
+    input[type="date"],
+    input[type="time"],
+    textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--cream);
+      transition: border-color 0.15s;
+    }
+
+    input[type="date"]:focus,
+    input[type="time"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--terra);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 76px;
+    }
+
+    .time-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.875rem;
+      margin-bottom: 0;
+    }
+
+    .time-row .form-group {
+      margin-bottom: 0;
+    }
+
+    .time-error {
+      font-size: 0.85rem;
+      color: var(--error-color);
+      margin-top: 0.4rem;
+      min-height: 1.2em;
+    }
+
+    /* Live hours display */
+    .hours-box {
+      background: var(--cream);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      text-align: center;
+      margin: 1rem 0 1.2rem;
+      display: none;
+    }
+
+    .hours-box.visible {
+      display: block;
+    }
+
+    .hours-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--terra-dark);
+      line-height: 1;
+    }
+
+    .hours-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* Pay period info */
+    .pay-info {
+      background: #f2f7f4;
+      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.9rem;
+    }
+
+    .pay-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .pay-row + .pay-row {
+      margin-top: 0.35rem;
+    }
+
+    .pay-row .pay-label {
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .pay-row .pay-value {
+      font-weight: 700;
+      color: var(--text);
+      text-align: right;
+    }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--terra);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      margin-top: 0.25rem;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background: var(--terra-dark);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Feedback messages */
+    .message {
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+
+    .message.success {
+      display: block;
+      background: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    .message.error {
+      display: block;
+      background: #fdf0ee;
+      color: var(--error-color);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Hi, Jayme!</h1>
+      <p>Log your hours for the Tremper family</p>
+    </header>
+
+    <div class="card">
+      <form id="timeForm" novalidate>
+
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" required>
+        </div>
+
+        <div class="time-row">
+          <div class="form-group">
+            <label for="clockIn">Clock In</label>
+            <input type="time" id="clockIn" name="clockIn" required>
+          </div>
+          <div class="form-group">
+            <label for="clockOut">Clock Out</label>
+            <input type="time" id="clockOut" name="clockOut" required>
+          </div>
+        </div>
+        <div class="time-error" id="timeError"></div>
+
+        <div class="hours-box" id="hoursBox">
+          <div class="hours-number" id="hoursNumber"></div>
+          <div class="hours-label">hours today</div>
+        </div>
+
+        <div class="pay-info" id="payInfo">
+          <div class="pay-row">
+            <span class="pay-label">Pay period</span>
+            <span class="pay-value" id="payPeriod">—</span>
+          </div>
+          <div class="pay-row">
+            <span class="pay-label">Payday</span>
+            <span class="pay-value" id="payday">—</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notes <span class="optional">(optional)</span></label>
+          <textarea id="notes" name="notes" placeholder="Took Myles to the park"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Log Hours</button>
+        <div class="message" id="message"></div>
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJezh416l4HuNU1XeeNH7Jror-9mt7T52LFUZsIVx0o6o85hpi4L9hGOAlszcPjajk/exec';
+
+    const dateInput    = document.getElementById('date');
+    const clockInInput = document.getElementById('clockIn');
+    const clockOutInput= document.getElementById('clockOut');
+    const notesInput   = document.getElementById('notes');
+    const hoursBox     = document.getElementById('hoursBox');
+    const hoursNumber  = document.getElementById('hoursNumber');
+    const payPeriodEl  = document.getElementById('payPeriod');
+    const paydayEl     = document.getElementById('payday');
+    const timeError    = document.getElementById('timeError');
+    const submitBtn    = document.getElementById('submitBtn');
+    const messageEl    = document.getElementById('message');
+
+    // Default date to today using local time (avoids UTC-offset surprises)
+    (function setDefaultDate() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      dateInput.value = `${y}-${m}-${day}`;
+    })();
+
+    function parseLocalDate(str) {
+      const [y, m, d] = str.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function fmtShort(date) {
+      return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+
+    function fmtFull(date) {
+      return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function getWeekInfo(dateStr) {
+      if (!dateStr) return null;
+      const date = parseLocalDate(dateStr);
+      const daysFromMonday = (date.getDay() + 6) % 7;
+      const monday = new Date(date);
+      monday.setDate(date.getDate() - daysFromMonday);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      const payday = new Date(monday);
+      payday.setDate(monday.getDate() + 11);
+      return { monday, sunday, payday };
+    }
+
+    function calcHours(inVal, outVal) {
+      if (!inVal || !outVal) return null;
+      const [inH, inM]   = inVal.split(':').map(Number);
+      const [outH, outM] = outVal.split(':').map(Number);
+      const diff = (outH * 60 + outM) - (inH * 60 + inM);
+      return diff > 0 ? (diff / 60).toFixed(2) : null;
+    }
+
+    function updatePayInfo() {
+      const info = getWeekInfo(dateInput.value);
+      if (info) {
+        payPeriodEl.textContent = fmtShort(info.monday) + ' – ' + fmtShort(info.sunday);
+        paydayEl.textContent    = fmtFull(info.payday);
+      } else {
+        payPeriodEl.textContent = '—';
+        paydayEl.textContent    = '—';
+      }
+    }
+
+    function updateHours() {
+      const hours = calcHours(clockInInput.value, clockOutInput.value);
+      if (hours) {
+        hoursNumber.textContent = hours;
+        hoursBox.classList.add('visible');
+        timeError.textContent = '';
+      } else if (clockInInput.value && clockOutInput.value) {
+        hoursBox.classList.remove('visible');
+        timeError.textContent = 'Clock-out must be after clock-in.';
+      } else {
+        hoursBox.classList.remove('visible');
+        timeError.textContent = '';
+      }
+    }
+
+    dateInput.addEventListener('change', updatePayInfo);
+    clockInInput.addEventListener('change', updateHours);
+    clockOutInput.addEventListener('change', updateHours);
+
+    updatePayInfo();
+
+    document.getElementById('timeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const dateVal    = dateInput.value;
+      const clockInVal = clockInInput.value;
+      const clockOutVal= clockOutInput.value;
+      const notesVal   = notesInput.value.trim();
+
+      if (!dateVal || !clockInVal || !clockOutVal) {
+        showMessage('error', 'Please fill in the date, clock-in, and clock-out fields.');
+        return;
+      }
+
+      const hours = calcHours(clockInVal, clockOutVal);
+      if (!hours) {
+        timeError.textContent = 'Clock-out must be after clock-in.';
+        return;
+      }
+
+      if (!APPS_SCRIPT_URL) {
+        showMessage('error', 'The form isn\'t connected yet. Please contact the Tremper family.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving…';
+      hideMessage();
+
+      try {
+        const resp = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          // text/plain avoids a CORS preflight while still sending JSON in the body
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ date: dateVal, clockIn: clockInVal, clockOut: clockOutVal, notes: notesVal }),
+        });
+        const result = await resp.json();
+
+        if (result.success) {
+          const dateFormatted = parseLocalDate(dateVal).toLocaleDateString('en-US', {
+            month: 'long', day: 'numeric', year: 'numeric',
+          });
+          showMessage('success', `Logged ${result.hours} hours for ${dateFormatted}!`);
+          clockInInput.value  = '';
+          clockOutInput.value = '';
+          notesInput.value    = '';
+          hoursBox.classList.remove('visible');
+          timeError.textContent = '';
+        } else {
+          showMessage('error', result.error || 'Something went wrong. Please try again.');
+        }
+      } catch (_) {
+        showMessage('error', 'Could not reach the server. Check your connection and try again.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Log Hours';
+      }
+    });
+
+    function showMessage(type, text) {
+      messageEl.className = 'message ' + type;
+      messageEl.textContent = text;
+    }
+
+    function hideMessage() {
+      messageEl.className = 'message';
+    }
+  </script>
+</body>
+</html>
